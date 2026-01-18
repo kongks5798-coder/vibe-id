@@ -252,3 +252,55 @@ body {
   background: var(--foreground);
   color: var(--background);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Dark Mode Support
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #F9F9F7;
+  --muted: #9CA3AF;
+  --border: #374151;
+  --card-bg: #1F2937;
+}
+
+.dark body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #4B5563;
+}
+
+/* Dark mode selection */
+.dark ::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* Loading Tips Animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}

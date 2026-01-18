@@ -6,6 +6,9 @@ import { Sparkles } from "lucide-react";
 import UploadZone from "@/components/UploadZone";
 import Scanner from "@/components/Scanner";
 import ResultCard from "@/components/ResultCard";
+import ThemeToggle from "@/components/ThemeToggle";
+import AnalysisCounter from "@/components/AnalysisCounter";
+import Footer from "@/components/Footer";
 import type { ArchetypeData } from "@/data/archetypes";
 
 type AppState = "landing" | "scanning" | "result";
@@ -59,6 +62,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
+      <ThemeToggle />
       <AnimatePresence mode="wait">
         {/* Landing State */}
         {state === "landing" && (
@@ -68,8 +72,18 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="min-h-screen flex flex-col items-center justify-center px-6"
+            className="min-h-screen flex flex-col items-center justify-center px-6 pb-24"
           >
+            {/* Analysis Counter */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="mb-8"
+            >
+              <AnalysisCounter />
+            </motion.div>
+
             {/* Hero Section */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -79,21 +93,21 @@ export default function Home() {
             >
               {/* Logo */}
               <div className="inline-flex items-center gap-2 mb-8">
-                <div className="w-10 h-10 bg-[#171717] rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-[#171717] dark:bg-white rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white dark:text-[#171717]" />
                 </div>
-                <span className="text-2xl font-medium tracking-tight">VIBE-ID</span>
+                <span className="text-2xl font-medium tracking-tight dark:text-white">VIBE-ID</span>
               </div>
 
               {/* Headline */}
-              <h1 className="text-4xl md:text-6xl font-medium tracking-tight mb-4 tesla-heading">
+              <h1 className="text-4xl md:text-6xl font-medium tracking-tight mb-4 tesla-heading dark:text-white">
                 Discover Your
                 <br />
-                <span className="text-gray-400">Aesthetic DNA</span>
+                <span className="text-gray-400 dark:text-gray-500">Aesthetic DNA</span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-gray-500 text-lg max-w-md mx-auto">
+              <p className="text-gray-500 dark:text-gray-400 text-lg max-w-md mx-auto">
                 One selfie. Nine possibilities.
                 <br />
                 Find your visual identity through AI.
@@ -117,7 +131,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="mt-16 text-center"
             >
-              <p className="tesla-caption mb-4">9 AESTHETIC ARCHETYPES</p>
+              <p className="tesla-caption mb-4 dark:text-gray-400">9 AESTHETIC ARCHETYPES</p>
               <div className="flex flex-wrap justify-center gap-3 max-w-lg">
                 {[
                   "Silent Luxury",
@@ -132,7 +146,7 @@ export default function Home() {
                 ].map((name) => (
                   <span
                     key={name}
-                    className="text-xs px-3 py-1.5 bg-gray-100 rounded-full text-gray-600"
+                    className="text-xs px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300"
                   >
                     {name}
                   </span>
@@ -140,15 +154,15 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Bottom Tagline */}
-            <motion.p
+            {/* Footer Component */}
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="fixed bottom-8 text-xs text-gray-400 tracking-[0.2em]"
+              className="absolute bottom-0 left-0 right-0"
             >
-              POWERED BY AI AESTHETIC ENGINE
-            </motion.p>
+              <Footer />
+            </motion.div>
           </motion.div>
         )}
 

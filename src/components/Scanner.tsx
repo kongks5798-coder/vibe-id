@@ -18,6 +18,18 @@ const SCAN_MESSAGES = [
   "FINALIZING ANALYSIS..."
 ];
 
+// Fun loading tips in Korean
+const LOADING_TIPS = [
+  "💡 눈썹 모양이 전체 인상의 70%를 결정한다는 사실!",
+  "🎨 당신의 퍼스널 컬러는 피부 톤에서 결정됩니다",
+  "👔 패션 아이콘들은 평균 7개의 시그니처 아이템을 가집니다",
+  "✨ 첫인상은 0.1초 만에 결정됩니다",
+  "🌟 가장 스타일리시한 사람들은 20%의 옷을 80% 입습니다",
+  "💎 자신만의 스타일을 찾는 데 평균 3년이 걸립니다",
+  "🎯 컬러 매칭만 잘해도 스타일 점수 +30%",
+  "👀 시선은 얼굴 → 상의 → 신발 순서로 이동합니다",
+];
+
 // Facial tracking points (relative positions)
 const TRACKING_POINTS = [
   { x: 50, y: 25 },   // Forehead
@@ -43,6 +55,7 @@ export default function Scanner({ imageUrl, onComplete }: ScannerProps) {
   const [messageIndex, setMessageIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [showPoints, setShowPoints] = useState(false);
+  const [tipIndex, setTipIndex] = useState(0);
 
   useEffect(() => {
     // Show tracking points after initial scan
@@ -66,10 +79,16 @@ export default function Scanner({ imageUrl, onComplete }: ScannerProps) {
       });
     }, 100);
 
+    // Loading tips rotation
+    const tipInterval = setInterval(() => {
+      setTipIndex((prev) => (prev + 1) % LOADING_TIPS.length);
+    }, 3000);
+
     return () => {
       clearTimeout(pointsTimer);
       clearInterval(messageInterval);
       clearInterval(progressInterval);
+      clearInterval(tipInterval);
     };
   }, [onComplete]);
 
@@ -218,6 +237,19 @@ export default function Scanner({ imageUrl, onComplete }: ScannerProps) {
           <p>VIBE-ID v1.0</p>
           <p>AESTHETIC ENGINE</p>
         </div>
+
+        {/* Loading Tips */}
+        <motion.div
+          key={tipIndex}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="absolute bottom-20 left-4 right-4 text-center"
+        >
+          <p className="text-sm text-gray-400 bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">
+            {LOADING_TIPS[tipIndex]}
+          </p>
+        </motion.div>
       </div>
     </div>
   );

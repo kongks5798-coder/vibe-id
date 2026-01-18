@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { toPng } from "html-to-image";
 import { Download, Share2, RotateCcw, Users, Shirt, Palette, ShoppingBag, Star, ChevronDown, ChevronUp } from "lucide-react";
 import type { ArchetypeData } from "@/data/archetypes";
+import Confetti from "@/components/Confetti";
+import KakaoShare from "@/components/KakaoShare";
 
 interface ResultCardProps {
   archetype: ArchetypeData;
@@ -15,6 +17,13 @@ interface ResultCardProps {
 export default function ResultCard({ archetype, userImage, onReset }: ResultCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [showFullGuide, setShowFullGuide] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  // Trigger confetti on mount
+  useEffect(() => {
+    const timer = setTimeout(() => setShowConfetti(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleDownload = async () => {
     if (!cardRef.current) return;
@@ -63,7 +72,8 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-8 px-4 bg-[#F9F9F7]">
+    <div className="min-h-screen flex flex-col items-center py-8 px-4 bg-[#F9F9F7] dark:bg-[#0a0a0a]">
+      <Confetti trigger={showConfetti} />
       {/* Result Card - 9:16 Ratio for Instagram Stories */}
       <motion.div
         ref={cardRef}
@@ -187,11 +197,21 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
 
         <button
           onClick={onReset}
-          className="flex items-center gap-2 px-6 py-3 border border-[#171717] text-[#171717] rounded-lg hover:bg-[#171717] hover:text-white transition-colors"
+          className="flex items-center gap-2 px-6 py-3 border border-[#171717] dark:border-gray-600 text-[#171717] dark:text-white rounded-lg hover:bg-[#171717] hover:text-white dark:hover:bg-gray-700 transition-colors"
         >
           <RotateCcw size={18} />
           <span className="text-sm font-medium tracking-wide">RETRY</span>
         </button>
+      </motion.div>
+
+      {/* Kakao Share Button */}
+      <motion.div
+        className="mt-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+      >
+        <KakaoShare archetype={archetype} />
       </motion.div>
 
       {/* ═══════════════════════════════════════════════════════════════════════
@@ -204,11 +224,11 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
         transition={{ delay: 0.7 }}
       >
         <div className="flex items-center gap-2 mb-4">
-          <Users size={20} className="text-[#171717]" />
-          <h3 className="text-lg font-medium">같은 Vibe의 셀럽</h3>
+          <Users size={20} className="text-[#171717] dark:text-white" />
+          <h3 className="text-lg font-medium dark:text-white">같은 Vibe의 셀럽</h3>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
           <div className="flex flex-wrap gap-3">
             {archetype.celebrities.map((celeb, idx) => (
               <motion.div
@@ -216,14 +236,14 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.8 + idx * 0.1 }}
-                className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-full"
+                className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-full"
               >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                   <Star size={14} className="text-gray-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{celeb.nameKo}</p>
-                  <p className="text-[10px] text-gray-500">{celeb.name}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{celeb.nameKo}</p>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400">{celeb.name}</p>
                 </div>
               </motion.div>
             ))}
@@ -241,11 +261,11 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
         transition={{ delay: 0.9 }}
       >
         <div className="flex items-center gap-2 mb-4">
-          <ShoppingBag size={20} className="text-[#171717]" />
-          <h3 className="text-lg font-medium">추천 브랜드</h3>
+          <ShoppingBag size={20} className="text-[#171717] dark:text-white" />
+          <h3 className="text-lg font-medium dark:text-white">추천 브랜드</h3>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
           <div className="flex flex-wrap gap-2">
             {archetype.fashionBrands.map((brand, idx) => (
               <motion.span
@@ -253,7 +273,7 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 + idx * 0.05 }}
-                className="px-4 py-2 bg-[#171717] text-white text-sm font-medium rounded-full"
+                className="px-4 py-2 bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-sm font-medium rounded-full"
               >
                 {brand}
               </motion.span>
@@ -273,27 +293,27 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Shirt size={20} className="text-[#171717]" />
-            <h3 className="text-lg font-medium">스타일 가이드</h3>
+            <Shirt size={20} className="text-[#171717] dark:text-white" />
+            <h3 className="text-lg font-medium dark:text-white">스타일 가이드</h3>
           </div>
           <button
             onClick={() => setShowFullGuide(!showFullGuide)}
-            className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             {showFullGuide ? "접기" : "전체 보기"}
             {showFullGuide ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-5">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-5">
           {/* Recommended Outfits */}
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">추천 코디</p>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">추천 코디</p>
             <div className="space-y-2">
               {archetype.styleGuide.outfits.slice(0, showFullGuide ? undefined : 2).map((outfit, idx) => (
                 <div key={idx} className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#171717] mt-2 flex-shrink-0" />
-                  <p className="text-sm text-gray-700">{outfit}</p>
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#171717] dark:bg-white mt-2 flex-shrink-0" />
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{outfit}</p>
                 </div>
               ))}
             </div>
@@ -302,14 +322,14 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
           {/* Color Palette */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Palette size={14} className="text-gray-500" />
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">추천 컬러</p>
+              <Palette size={14} className="text-gray-500 dark:text-gray-400" />
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">추천 컬러</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {archetype.styleGuide.colors.map((color) => (
                 <span
                   key={color}
-                  className="px-3 py-1.5 bg-gray-100 text-sm text-gray-700 rounded-full"
+                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 rounded-full"
                 >
                   {color}
                 </span>
@@ -321,12 +341,12 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
           {showFullGuide && (
             <>
               <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">추천 액세서리</p>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">추천 액세서리</p>
                 <div className="flex flex-wrap gap-2">
                   {archetype.styleGuide.accessories.map((acc) => (
                     <span
                       key={acc}
-                      className="px-3 py-1.5 bg-gray-50 text-sm text-gray-600 rounded-full border border-gray-200"
+                      className="px-3 py-1.5 bg-gray-50 dark:bg-gray-700 text-sm text-gray-600 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600"
                     >
                       {acc}
                     </span>
@@ -341,7 +361,7 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
                   {archetype.styleGuide.avoidItems.map((item) => (
                     <span
                       key={item}
-                      className="px-3 py-1.5 bg-red-50 text-sm text-red-500 rounded-full"
+                      className="px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-sm text-red-500 dark:text-red-400 rounded-full"
                     >
                       {item}
                     </span>
@@ -360,9 +380,9 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
         animate={{ opacity: 1 }}
         transition={{ delay: 1.3 }}
       >
-        <h3 className="text-lg font-medium mb-3">About {archetype.name}</h3>
-        <p className="text-sm text-gray-600 leading-relaxed">{archetype.narrativeKo}</p>
-        <p className="mt-4 text-xs text-gray-400 italic">Visual DNA: {archetype.visualDNA}</p>
+        <h3 className="text-lg font-medium mb-3 dark:text-white">About {archetype.name}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{archetype.narrativeKo}</p>
+        <p className="mt-4 text-xs text-gray-400 dark:text-gray-500 italic">Visual DNA: {archetype.visualDNA}</p>
       </motion.div>
     </div>
   );

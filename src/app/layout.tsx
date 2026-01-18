@@ -43,9 +43,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var savedTheme = localStorage.getItem('vibe-id-theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F9F9F7] text-[#171717]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F9F9F7] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#F9F9F7] transition-colors`}
       >
         {children}
       </body>
