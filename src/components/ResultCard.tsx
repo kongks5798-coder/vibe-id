@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
-import { Download, Share2, RotateCcw } from "lucide-react";
+import { Download, Share2, RotateCcw, Users, Shirt, Palette, ShoppingBag, Star, ChevronDown, ChevronUp } from "lucide-react";
 import type { ArchetypeData } from "@/data/archetypes";
 
 interface ResultCardProps {
@@ -14,6 +14,7 @@ interface ResultCardProps {
 
 export default function ResultCard({ archetype, userImage, onReset }: ResultCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [showFullGuide, setShowFullGuide] = useState(false);
 
   const handleDownload = async () => {
     if (!cardRef.current) return;
@@ -42,7 +43,6 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
         pixelRatio: 2,
       });
 
-      // Convert data URL to blob
       const response = await fetch(dataUrl);
       const blob = await response.blob();
       const file = new File([blob], "vibe-id-result.png", { type: "image/png" });
@@ -54,7 +54,6 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
           files: [file],
         });
       } else {
-        // Fallback: copy to clipboard or download
         handleDownload();
       }
     } catch (error) {
@@ -64,7 +63,7 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#F9F9F7]">
+    <div className="min-h-screen flex flex-col items-center py-8 px-4 bg-[#F9F9F7]">
       {/* Result Card - 9:16 Ratio for Instagram Stories */}
       <motion.div
         ref={cardRef}
@@ -105,26 +104,22 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
               className="w-full h-full object-cover"
             />
           </div>
-          {/* Decorative ring */}
           <div className="absolute -inset-4 rounded-full border border-white/10" />
           <div className="absolute -inset-8 rounded-full border border-white/5" />
         </div>
 
         {/* Bottom Section - Archetype Info */}
         <div className={`absolute bottom-0 left-0 right-0 p-6 ${archetype.textColor === "light" ? "text-white" : "text-black"}`}>
-          {/* Archetype Name */}
           <div className="text-center mb-6">
             <p className="text-xs font-medium tracking-[0.3em] opacity-60 mb-2">YOUR ARCHETYPE</p>
             <h2 className="text-3xl font-medium tracking-tight">{archetype.name}</h2>
             <p className="text-sm opacity-70 mt-1">{archetype.nameKo}</p>
           </div>
 
-          {/* Narrative */}
           <p className={`text-sm text-center opacity-80 mb-6 italic ${archetype.textColor === "light" ? "text-white/90" : "text-black/90"}`}>
             &ldquo;{archetype.narrative}&rdquo;
           </p>
 
-          {/* Metrics */}
           <div className="grid grid-cols-4 gap-2 mb-4">
             {[
               { label: "MODERN", value: archetype.metrics.modernityIndex },
@@ -139,7 +134,6 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
             ))}
           </div>
 
-          {/* Keywords */}
           <div className="flex flex-wrap justify-center gap-2">
             {archetype.keywords.map((keyword) => (
               <span
@@ -155,7 +149,6 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
             ))}
           </div>
 
-          {/* Footer */}
           <div className="mt-6 pt-4 border-t border-current/10 flex justify-between items-center">
             <p className="text-[10px] tracking-[0.2em] opacity-40">VIBE-ID.IO</p>
             <p className="text-[10px] tracking-[0.1em] opacity-40">
@@ -201,12 +194,171 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
         </button>
       </motion.div>
 
-      {/* Archetype Details (Below Card) */}
+      {/* ═══════════════════════════════════════════════════════════════════════
+          Celebrity Matching Section
+          ═══════════════════════════════════════════════════════════════════════ */}
       <motion.div
-        className="mt-12 max-w-md text-center"
+        className="mt-12 w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Users size={20} className="text-[#171717]" />
+          <h3 className="text-lg font-medium">같은 Vibe의 셀럽</h3>
+        </div>
+
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div className="flex flex-wrap gap-3">
+            {archetype.celebrities.map((celeb, idx) => (
+              <motion.div
+                key={celeb.name}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8 + idx * 0.1 }}
+                className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-full"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                  <Star size={14} className="text-gray-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{celeb.nameKo}</p>
+                  <p className="text-[10px] text-gray-500">{celeb.name}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          Fashion Brands Section
+          ═══════════════════════════════════════════════════════════════════════ */}
+      <motion.div
+        className="mt-8 w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <ShoppingBag size={20} className="text-[#171717]" />
+          <h3 className="text-lg font-medium">추천 브랜드</h3>
+        </div>
+
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div className="flex flex-wrap gap-2">
+            {archetype.fashionBrands.map((brand, idx) => (
+              <motion.span
+                key={brand}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1 + idx * 0.05 }}
+                className="px-4 py-2 bg-[#171717] text-white text-sm font-medium rounded-full"
+              >
+                {brand}
+              </motion.span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          Style Guide Section
+          ═══════════════════════════════════════════════════════════════════════ */}
+      <motion.div
+        className="mt-8 w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.1 }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Shirt size={20} className="text-[#171717]" />
+            <h3 className="text-lg font-medium">스타일 가이드</h3>
+          </div>
+          <button
+            onClick={() => setShowFullGuide(!showFullGuide)}
+            className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          >
+            {showFullGuide ? "접기" : "전체 보기"}
+            {showFullGuide ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
+        </div>
+
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-5">
+          {/* Recommended Outfits */}
+          <div>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">추천 코디</p>
+            <div className="space-y-2">
+              {archetype.styleGuide.outfits.slice(0, showFullGuide ? undefined : 2).map((outfit, idx) => (
+                <div key={idx} className="flex items-start gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#171717] mt-2 flex-shrink-0" />
+                  <p className="text-sm text-gray-700">{outfit}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Color Palette */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Palette size={14} className="text-gray-500" />
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">추천 컬러</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {archetype.styleGuide.colors.map((color) => (
+                <span
+                  key={color}
+                  className="px-3 py-1.5 bg-gray-100 text-sm text-gray-700 rounded-full"
+                >
+                  {color}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Accessories - Only show when expanded */}
+          {showFullGuide && (
+            <>
+              <div>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">추천 액세서리</p>
+                <div className="flex flex-wrap gap-2">
+                  {archetype.styleGuide.accessories.map((acc) => (
+                    <span
+                      key={acc}
+                      className="px-3 py-1.5 bg-gray-50 text-sm text-gray-600 rounded-full border border-gray-200"
+                    >
+                      {acc}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Avoid Items */}
+              <div>
+                <p className="text-xs font-medium text-red-400 uppercase tracking-wider mb-3">피해야 할 아이템</p>
+                <div className="flex flex-wrap gap-2">
+                  {archetype.styleGuide.avoidItems.map((item) => (
+                    <span
+                      key={item}
+                      className="px-3 py-1.5 bg-red-50 text-sm text-red-500 rounded-full"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </motion.div>
+
+      {/* About Section */}
+      <motion.div
+        className="mt-12 mb-8 max-w-md text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 1.3 }}
       >
         <h3 className="text-lg font-medium mb-3">About {archetype.name}</h3>
         <p className="text-sm text-gray-600 leading-relaxed">{archetype.narrativeKo}</p>
