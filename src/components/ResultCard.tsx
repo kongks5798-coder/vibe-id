@@ -8,6 +8,7 @@ import type { ArchetypeData } from "@/data/archetypes";
 import Confetti from "@/components/Confetti";
 import KakaoShare from "@/components/KakaoShare";
 import RarityBadge from "@/components/RarityBadge";
+import CelebrityMatch from "@/components/CelebrityMatch";
 import { saveResult, getShareUrl } from "@/utils/resultStorage";
 
 interface ResultCardProps {
@@ -272,10 +273,22 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
       </motion.div>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          Celebrity Matching Section
+          Celebrity Lookalike Match - NEW!
           ═══════════════════════════════════════════════════════════════════════ */}
       <motion.div
-        className="mt-12 w-full max-w-md"
+        className="mt-8 w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.68 }}
+      >
+        <CelebrityMatch archetypeId={archetype.id} />
+      </motion.div>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          Celebrity Matching Section (List)
+          ═══════════════════════════════════════════════════════════════════════ */}
+      <motion.div
+        className="mt-8 w-full max-w-md"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}

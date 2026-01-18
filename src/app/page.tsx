@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, Gamepad2, Sparkle, Star } from "lucide-react";
 import UploadZone from "@/components/UploadZone";
 import Scanner from "@/components/Scanner";
 import ResultCard from "@/components/ResultCard";
@@ -151,6 +152,24 @@ export default function Home() {
                     {name}
                   </span>
                 ))}
+              </div>
+
+              {/* More Features Links */}
+              <div className="mt-8 flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/game"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-full hover:from-purple-600 hover:to-pink-600 transition-all shadow-md"
+                >
+                  <Gamepad2 size={16} />
+                  <span>스타일 게임</span>
+                </Link>
+                <Link
+                  href="/fortune"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-full hover:from-amber-600 hover:to-orange-600 transition-all shadow-md"
+                >
+                  <Sparkle size={16} />
+                  <span>오늘의 운세</span>
+                </Link>
               </div>
             </motion.div>
 
