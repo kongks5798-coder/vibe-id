@@ -3,10 +3,12 @@
 import { motion } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { toPng } from "html-to-image";
-import { Download, Share2, RotateCcw, Users, Shirt, Palette, ShoppingBag, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { Download, Share2, RotateCcw, Users, Shirt, Palette, ShoppingBag, Star, ChevronDown, ChevronUp, Link2, Heart } from "lucide-react";
 import type { ArchetypeData } from "@/data/archetypes";
 import Confetti from "@/components/Confetti";
 import KakaoShare from "@/components/KakaoShare";
+import RarityBadge from "@/components/RarityBadge";
+import { saveResult, getShareUrl } from "@/utils/resultStorage";
 
 interface ResultCardProps {
   archetype: ArchetypeData;
@@ -18,12 +20,23 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
   const cardRef = useRef<HTMLDivElement>(null);
   const [showFullGuide, setShowFullGuide] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [resultId, setResultId] = useState<string>("");
+  const [copied, setCopied] = useState(false);
 
-  // Trigger confetti on mount
+  // Save result and trigger confetti on mount
   useEffect(() => {
+    const id = saveResult(archetype);
+    setResultId(id);
     const timer = setTimeout(() => setShowConfetti(true), 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [archetype]);
+
+  const handleCopyCompareLink = () => {
+    const shareUrl = getShareUrl(resultId);
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleDownload = async () => {
     if (!cardRef.current) return;
@@ -74,6 +87,17 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
   return (
     <div className="min-h-screen flex flex-col items-center py-8 px-4 bg-[#F9F9F7] dark:bg-[#0a0a0a]">
       <Confetti trigger={showConfetti} />
+
+      {/* Rarity Badge - Show before card */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="mb-6"
+      >
+        <RarityBadge archetypeId={archetype.id} />
+      </motion.div>
+
       {/* Result Card - 9:16 Ratio for Instagram Stories */}
       <motion.div
         ref={cardRef}
@@ -212,6 +236,39 @@ export default function ResultCard({ archetype, userImage, onReset }: ResultCard
         transition={{ delay: 0.6 }}
       >
         <KakaoShare archetype={archetype} />
+      </motion.div>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          Friend Comparison Invite - NEW!
+          ═══════════════════════════════════════════════════════════════════════ */}
+      <motion.div
+        className="mt-8 w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.65 }}
+      >
+        <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-2xl p-5 border border-pink-100 dark:border-pink-800/30">
+          <div className="flex items-center gap-2 mb-3">
+            <Heart size={20} className="text-pink-500" />
+            <h3 className="text-lg font-medium dark:text-white">친구와 Vibe 궁합 테스트</h3>
+          </div>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+            친구에게 링크를 보내서 스타일 궁합을 확인해보세요!
+          </p>
+          <button
+            onClick={handleCopyCompareLink}
+            className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${
+              copied
+                ? "bg-green-500 text-white"
+                : "bg-pink-500 hover:bg-pink-600 text-white"
+            }`}
+          >
+            <Link2 size={18} />
+            <span className="text-sm font-medium">
+              {copied ? "링크 복사완료! ✓" : "궁합 테스트 링크 복사"}
+            </span>
+          </button>
+        </div>
       </motion.div>
 
       {/* ═══════════════════════════════════════════════════════════════════════
